@@ -1,0 +1,45 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+.localhistory/
+.vs/
+build/
+bin_unix*/
+debug_bin_unix*/
+obj/
+*.idb
+*.tlog
+*.db
+*.log
+*.ilk
+*.debug
+*.pdb
+*.exp
+*.iobj
+*.ipdb
