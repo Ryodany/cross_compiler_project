@@ -25,5 +25,5 @@ Only tested under Fedora 27.
  
 ## Run
 
- - ./bin_unix/cross_compiler_project
+ - ./gcc7.3.1/bin_unix/cross_compiler_project
  
