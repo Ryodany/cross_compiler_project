@@ -102,7 +102,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 		COMMAND ${CMAKE_STRIP} -g $<TARGET_FILE:${PROJECT_NAME}d>)
 else()
 	add_executable(${PROJECT_NAME} ${SOURCE_DIR}/main.cpp)
-	target_link_libraries(${PROJECT_NAME} libcore_s.a)
+	target_link_libraries(${PROJECT_NAME} libcore_s.so)
 
 	ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} POST_BUILD
                 COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${PROJECT_NAME}>
