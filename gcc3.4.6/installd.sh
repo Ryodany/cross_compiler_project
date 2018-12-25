@@ -5,10 +5,10 @@ error() {
 	exit 1
 }
 
-'''echo Installing libraries..
-if ! cp -r debug_bin_unix/*.a /usr/local/lib ; then
+echo Installing libraries..
+:'if ! cp -r debug_bin_unix/*.a /usr/local/lib ; then
 	error
-fi'''
+fi'
 if ! cp -r debug_bin_unix/*.so* /usr/local/lib ; then
 	error
 fi
