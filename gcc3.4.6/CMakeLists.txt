@@ -11,7 +11,7 @@ set(OUTPUT_UNIX_RELEASE bin_unix)
 set(OUTPUT_WIN32 bin_win32)
 # Folders files
 set(SOURCE_DIR ./src)
-set(HEADER_DIR ./include)
+set(HEADERS_DIR ./include)
 
 
 ############## CMake Project ################
@@ -66,9 +66,6 @@ if (WIN32)
 	  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/${OUTPUT_WIN32})
 endif (WIN32)
 
-# Include directories 
-include_directories(${HEADER_DIR})
-
 ################# Flags ################
 # Defines Flags for Windows and Linux. #
 
@@ -80,32 +77,29 @@ if(NOT MSVC)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98")
 endif(NOT MSVC)
 
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+	set(CORE_LIB_NAME cored)
+else()
+	set(CORE_LIB_NAME core)
+endif()
+
 ################ Files ################
 #   --   Add files to project.   --   #
 #
 
 # include files
-include_directories(./include)
+include_directories(${HEADERS_DIR})
 
+# source files
 set(SOURCE_FILES ${SOURCE_DIR}/core.cpp)
+
 # Add libraries to build.
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-	add_library(cored_s STATIC ${SOURCE_FILES})
-	add_library(cored SHARED ${SOURCE_FILES})	
-	set_target_properties(cored_s cored PROPERTIES VERSION ${PROJECT_VERSION})
+#add_library(cored_s STATIC ${SOURCE_FILES})
+add_library(${CORE_LIB_NAME} SHARED ${SOURCE_FILES})	
+#set_target_properties(cored_s cored PROPERTIES VERSION ${PROJECT_VERSION})
+set_target_properties(${CORE_LIB_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
 
-	ADD_CUSTOM_COMMAND(TARGET cored POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:cored>
-					${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cored.debug
-                COMMAND ${CMAKE_STRIP} -g $<TARGET_FILE:cored>)
-else()
-	add_library(core_s STATIC ${SOURCE_FILES})
-	add_library(core SHARED ${SOURCE_FILES})
-	set_target_properties(core_s core PROPERTIES VERSION ${PROJECT_VERSION})
-
-        ADD_CUSTOM_COMMAND(TARGET core POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:core>
-                                        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/core.debug
-                COMMAND ${CMAKE_STRIP} -g $<TARGET_FILE:core>)
-endif()
-
+ADD_CUSTOM_COMMAND(TARGET ${CORE_LIB_NAME} POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${CORE_LIB_NAME}>
+				${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${CORE_LIB_NAME}.debug
+			COMMAND ${CMAKE_STRIP} -g $<TARGET_FILE:${CORE_LIB_NAME}>)

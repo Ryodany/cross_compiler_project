@@ -11,7 +11,7 @@ set(OUTPUT_UNIX_RELEASE bin_unix)
 set(OUTPUT_WIN32 bin_win32)
 # Folders files
 set(SOURCE_DIR ./src)
-set(HEADER_DIR ./include)
+set(HEADERS_DIR ./include)
 
 
 ############## CMake Project ################
@@ -64,9 +64,6 @@ if (WIN32)
 	  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/${OUTPUT_WIN32})
 endif (WIN32)
 
-# Include directories 
-include_directories(${HEADER_DIR})
-
 ################# Flags ################
 # Defines Flags for Windows and Linux. #
 
@@ -78,34 +75,36 @@ if(NOT MSVC)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -D_GLIBCXX_USE_CXX11_ABI=0")
 endif(NOT MSVC)
 
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+	set(BINARY_NAME ${PROJECT_NAME}d)
+	set(DEPENDENCY_LIBS libcored.so)
+else()
+	set(BINARY_NAME ${PROJECT_NAME})
+	set(DEPENDENCY_LIBS libcore.so)
+endif()
+
 ################ Files ################
 #   --   Add files to project.   --   #
 #
 
 # include files
-include_directories(./include)
+include_directories(${HEADERS_DIR})
+
+# source files
+set(SOURCE_FILES ${SOURCE_DIR}/main.cpp)
 
 set(GCC34_LIB_DIR ../gcc3.4.6)
 # lib headers
 include_directories(${GCC34_LIB_DIR}/include)
+# libs directory to link
 link_directories(/usr/local/lib)
 
 # Add binaries to build.
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-	add_executable(${PROJECT_NAME}d ${SOURCE_DIR}/main.cpp)
-	target_link_libraries(${PROJECT_NAME}d libcored_s.a)
+add_executable(${BINARY_NAME} ${SOURCE_FILES})
+target_link_libraries(${BINARY_NAME} ${DEPENDENCY_LIBS})
 
-
-	ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}d POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${PROJECT_NAME}d>
-					${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${PROJECT_NAME}d.debug
-		COMMAND ${CMAKE_STRIP} -g $<TARGET_FILE:${PROJECT_NAME}d>)
-else()
-	add_executable(${PROJECT_NAME} ${SOURCE_DIR}/main.cpp)
-	target_link_libraries(${PROJECT_NAME} libcore_s.so)
-
-	ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${PROJECT_NAME}>
-					${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${PROJECT_NAME}.debug
-                COMMAND ${CMAKE_STRIP} -g $<TARGET_FILE:${PROJECT_NAME}>)
-endif()
+# generate debug files
+ADD_CUSTOM_COMMAND(TARGET ${BINARY_NAME} POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${BINARY_NAME}>
+				${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${BINARY_NAME}.debug
+	COMMAND ${CMAKE_STRIP} -g $<TARGET_FILE:${BINARY_NAME}>)
