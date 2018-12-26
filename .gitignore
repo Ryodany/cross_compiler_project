@@ -33,6 +33,7 @@ build/
 bin_unix*/
 debug_bin_unix*/
 obj/
+plz-out/
 *.idb
 *.tlog
 *.db
